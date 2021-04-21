@@ -39,6 +39,7 @@ class Match:
     def __init__(self):
         self.player_1 = []
         self.player_2 = []
+        self.match = self.player_1, self.player_1, 
 
 
 def main():
@@ -102,42 +103,39 @@ def main():
             sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
             total_players = len(sorted_players_by_rank)
             mediane =round(len(sorted_players_by_rank)/2)
-            best_player = 0
             worst_player = mediane
 
             for index in range(mediane):
-                pair = [sorted_players_by_rank[best_player],sorted_players_by_rank[worst_player]]
+                pair = [sorted_players_by_rank[index],sorted_players_by_rank[worst_player]]
                 match = create_match(pair[0], pair[1])
                 turn.matches.append(match)
-                best_player += 1
                 worst_player += 1
 
             confirm("end_of_turn")
 
-            match_number = 0
             for index in range(mediane):
-                player_1_name = turn.matches[match_number].player_1[0].first_name
+                player_1_name = turn.matches[index].player_1[0].first_name
                 player_1_score = input("Enter " + player_1_name + "'s score : ")
-                turn.matches[match_number].player_1.append(player_1_score)
+                turn.matches[index].player_1.append(player_1_score)
 
-                player_2_name = turn.matches[match_number].player_2[0].first_name
+                player_2_name = turn.matches[index].player_2[0].first_name
                 player_2_score = input("Enter " + player_2_name + "'s score : ")
-                turn.matches[match_number].player_2.append(player_2_score)
-                match_number += 1
+                turn.matches[index].player_2.append(player_2_score)
             
             tournament_instance.turn.append(turn)
 
         # def after_first_turn():
         #     turn = Turn()
-        #     sorted_players_by_score = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
+        #     sorted_players_by_score = sorted(tournament_instance.turn.matches, key=operator.attrgetter('rank'))
 
-            
-            
 
-            
+
         first_turn()
         confirm("begin_of_turn")
-        print(tournament_instance.turn)
+        print(tournament_instance.turn[0].matches[0].player_1[1])
+        print(tournament_instance.turn[0].matches[0].match)
+
+
 
 
 
@@ -160,3 +158,9 @@ main()
 # print(my_list)
 # my_list[0] += 2
 # print(my_list)
+
+
+
+#ajouter id joueur pour identifier
+#je pousse l'id du joueur dans le match et pas l'instance entière 
+#vue : controlller appelle une fonctionne qui va faire un print

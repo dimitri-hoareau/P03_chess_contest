@@ -19,13 +19,15 @@ class Tournament:
 
 
 class Player:
-
-    def __init__(self): 
+    def __init__(self):
+        self.id = "" 
         self.first_name = ""
         self.last_name = ""
         self.birthday = ""
         self.sex = ""
         self.rank = 0
+        self.score = 0  #faire une fonction ?
+        self.players_played = []
 
 
 class Turn:
@@ -39,7 +41,7 @@ class Match:
     def __init__(self):
         self.player_1 = []
         self.player_2 = []
-        self.match = self.player_1, self.player_1, 
+        self.match = self.player_1, self.player_2, 
 
 
 def main():
@@ -68,6 +70,7 @@ def main():
         # player.birthday = input("Enter player's birthday: ")
         # player.sex = input("Enter player's sex: ")
         player.rank = input("Enter player's rank: ")
+        # player.id = input("Enter player's id: ")
         return player
 
     def create_tournament():
@@ -97,11 +100,15 @@ def main():
 
     def create_turn():
         tournament_instance = create_tournament()
+        sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
+
+        # for element in sorted_players_by_rank:
+        #     print(element.first_name)
+        #     print(element.rank)
 
         def first_turn():
             turn = Turn()
-            sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
-            total_players = len(sorted_players_by_rank)
+            # total_players = len(sorted_players_by_rank)
             mediane =round(len(sorted_players_by_rank)/2)
             worst_player = mediane
 
@@ -111,42 +118,114 @@ def main():
                 turn.matches.append(match)
                 worst_player += 1
 
-            confirm("end_of_turn")
+            # confirm("end_of_turn")
 
             for index in range(mediane):
                 player_1_name = turn.matches[index].player_1[0].first_name
                 player_1_score = input("Enter " + player_1_name + "'s score : ")
+                turn.matches[index].player_1[0].score += int(player_1_score)
+                turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0])
                 turn.matches[index].player_1.append(player_1_score)
 
                 player_2_name = turn.matches[index].player_2[0].first_name
                 player_2_score = input("Enter " + player_2_name + "'s score : ")
-                turn.matches[index].player_2.append(player_2_score)
+                turn.matches[index].player_2[0].score += int(player_2_score)
+                turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
+                turn.matches[index].player_2.append(player_2_score)  #pourquoi ????
             
             tournament_instance.turn.append(turn)
 
-        # def after_first_turn():
-        #     turn = Turn()
-        #     sorted_players_by_score = sorted(tournament_instance.turn.matches, key=operator.attrgetter('rank'))
+        def after_first_turn():
+            turn = Turn()
+            # sorted_players_by_score = sorted(tournament_instance.players, key=operator.attrgetter('score', 'rank'))
+            sorted_players_by_score = sorted(sorted_players_by_rank, key=operator.attrgetter('score'), reverse=True)
+
+            # for element in sorted_players_by_score:
+            #     print(element.first_name)
+            #     print(element.score)
+
+            total_players = len(sorted_players_by_score)
+            mediane =round(len(sorted_players_by_score)/2)
+            worst_player = mediane
+            players_already_in_game = []
+
+            for index in range(total_players):
+                pair = []
+                if sorted_players_by_score[index] in players_already_in_game:
+                    print("index")
+                    print(index)
+                    print("continue")
+                    continue
+                else:
+                    print("index")
+                    print(index)
+                    if (sorted_players_by_score[index + 1] not in sorted_players_by_score[index].players_played) and (sorted_players_by_score[index + 1] not in players_already_in_game):
+                        print("****************************first**********************")
+                        pair = [sorted_players_by_score[index],sorted_players_by_score[index + 1]]
+                        players_already_in_game.extend([sorted_players_by_score[index],sorted_players_by_score[index + 1]])
+
+                    elif ((index + 2) <= (len(sorted_players_by_score) - 1)) and (sorted_players_by_score[index + 2] not in sorted_players_by_score[index].players_played) and (sorted_players_by_score[index + 2] not in players_already_in_game):
+                        print("****************************first2**********************")
+                        pair = [sorted_players_by_score[index],sorted_players_by_score[index + 2]]
+                        players_already_in_game.extend([sorted_players_by_score[index],sorted_players_by_score[index + 2]])
+
+                    elif (index + 3) <= (len(sorted_players_by_score) - 1) and (sorted_players_by_score[index + 3] not in sorted_players_by_score[index].players_played) and (sorted_players_by_score[index + 3] not in players_already_in_game):
+                        print("****************************first4**********************")
+                        pair = [sorted_players_by_score[index],sorted_players_by_score[index + 3]]
+                        players_already_in_game.extend([sorted_players_by_score[index],sorted_players_by_score[index + 3]])
+
+                    else:
+                        print("******************************4***********************************")
+                        setted_not_played_players = set(sorted_players_by_score) - set(players_already_in_game)
+                        not_played_players = list(setted_not_played_players)
+                        pair = [sorted_players_by_score[index],not_played_players[0]]
+                        players_already_in_game.extend([sorted_players_by_score[index],not_played_players[0]])
+                        
+                
+                print("!!!!!!!!PAIR!!!!!!!!!!")
+                print(pair)
+                match = create_match(pair[0], pair[1])
+                turn.matches.append(match)
+                worst_player += 1 #probleme ici
+
+            # confirm("end_of_turn")
 
 
+
+            for index in range(mediane):
+                player_1_name = turn.matches[index].player_1[0].first_name
+                player_1_score = input("Enter " + player_1_name + "'s score : ")
+                turn.matches[index].player_1[0].score += int(player_1_score)
+                turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0])
+                turn.matches[index].player_1.append(player_1_score)
+
+                player_2_name = turn.matches[index].player_2[0].first_name
+                player_2_score = input("Enter " + player_2_name + "'s score : ")
+                turn.matches[index].player_2[0].score += int(player_2_score)
+                turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
+                turn.matches[index].player_2.append(player_2_score)  #pourquoi ????
+            
+            tournament_instance.turn.append(turn)
 
         first_turn()
-        confirm("begin_of_turn")
-        print(tournament_instance.turn[0].matches[0].player_1[1])
-        print(tournament_instance.turn[0].matches[0].match)
 
+        after_first_turn()
+        after_first_turn()
 
+        # confirm("begin_of_turn")
+        # print(tournament_instance.turn)
+        # print(tournament_instance.turn[0].matches)
+        # print(tournament_instance.turn[0].matches[0])
+        # print(tournament_instance.turn[0].matches[0].match)
+        # print(tournament_instance.players[0].score)
+        # print(tournament_instance.players[1].score)
+        # print(tournament_instance.players[2].score)
+        # print(tournament_instance.players[3].score)
 
-
-
-
-
-
-
-
-
-
-
+        # print(tournament_instance.players[0].players_played)
+        # print(tournament_instance.players[1].players_played)
+        # print(tournament_instance.players[2].players_played)
+        # print(tournament_instance.players[3].players_played)
 
 
     test2 = create_turn()
@@ -164,3 +243,11 @@ main()
 #ajouter id joueur pour identifier
 #je pousse l'id du joueur dans le match et pas l'instance entière 
 #vue : controlller appelle une fonctionne qui va faire un print
+
+# match = [
+#     (["instance", 1],["instance2", 0]),
+#     (["instance4", 2],["instance3", 0]),
+# ]
+
+# print(match)
+# print(sorted(match, key=lambda x: x[1][1]))

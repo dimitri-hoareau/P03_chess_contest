@@ -7,7 +7,7 @@ class Tournament:
         self.name = ""
         self.place = ""
         self.date = ""
-        self.number_of_turn = 4
+        self.number_of_turn = 6
         self.turn = []
         self.players = []
         self.time_control = ""
@@ -82,7 +82,7 @@ def main():
         # tournament.time_control = input("Enter tournament's time_control: ")
         # tournament.description = input("Enter tournament's description: ")
 
-        for index in range(4):
+        for index in range(6):
             player_instance = create_player()
             tournament.players.append(player_instance)
 
@@ -146,51 +146,37 @@ def main():
 
             total_players = len(sorted_players_by_score)
             mediane =round(len(sorted_players_by_score)/2)
-            worst_player = mediane
             players_already_in_game = []
 
-            for index in range(total_players):
+
+            for i in range(total_players):
                 pair = []
-                if sorted_players_by_score[index] in players_already_in_game:
-                    print("index")
-                    print(index)
-                    print("continue")
+                if sorted_players_by_score[i] in players_already_in_game:
                     continue
                 else:
-                    print("index")
-                    print(index)
-                    if (sorted_players_by_score[index + 1] not in sorted_players_by_score[index].players_played) and (sorted_players_by_score[index + 1] not in players_already_in_game):
-                        print("****************************first**********************")
-                        pair = [sorted_players_by_score[index],sorted_players_by_score[index + 1]]
-                        players_already_in_game.extend([sorted_players_by_score[index],sorted_players_by_score[index + 1]])
+                    total_players_iterations = total_players - 1
+                    for j in range(total_players_iterations):
+                        break_loop = False
+                        #variable pour chaque statement ?
+                        if ((i + (j + 1)) <= (len(sorted_players_by_score) - 1)) and (sorted_players_by_score[i + (j + 1)] not in sorted_players_by_score[i].players_played) and (sorted_players_by_score[i + (j + 1)] not in players_already_in_game):
+                            pair = [sorted_players_by_score[i],sorted_players_by_score[i + (j + 1)]]
+                            players_already_in_game.extend([sorted_players_by_score[i],sorted_players_by_score[i + (j + 1)]])
+                            break_loop = True
+                        
+                        if break_loop:
+                            break
 
-                    elif ((index + 2) <= (len(sorted_players_by_score) - 1)) and (sorted_players_by_score[index + 2] not in sorted_players_by_score[index].players_played) and (sorted_players_by_score[index + 2] not in players_already_in_game):
-                        print("****************************first2**********************")
-                        pair = [sorted_players_by_score[index],sorted_players_by_score[index + 2]]
-                        players_already_in_game.extend([sorted_players_by_score[index],sorted_players_by_score[index + 2]])
-
-                    elif (index + 3) <= (len(sorted_players_by_score) - 1) and (sorted_players_by_score[index + 3] not in sorted_players_by_score[index].players_played) and (sorted_players_by_score[index + 3] not in players_already_in_game):
-                        print("****************************first4**********************")
-                        pair = [sorted_players_by_score[index],sorted_players_by_score[index + 3]]
-                        players_already_in_game.extend([sorted_players_by_score[index],sorted_players_by_score[index + 3]])
-
-                    else:
-                        print("******************************4***********************************")
+                    if len(pair) == 0:
                         setted_not_played_players = set(sorted_players_by_score) - set(players_already_in_game)
                         not_played_players = list(setted_not_played_players)
-                        pair = [sorted_players_by_score[index],not_played_players[0]]
-                        players_already_in_game.extend([sorted_players_by_score[index],not_played_players[0]])
-                        
-                
-                print("!!!!!!!!PAIR!!!!!!!!!!")
-                print(pair)
+                        pair = [sorted_players_by_score[i],not_played_players[1]]
+                        players_already_in_game.extend([sorted_players_by_score[i],not_played_players[1]])
+                        break_loop = True
+
                 match = create_match(pair[0], pair[1])
                 turn.matches.append(match)
-                worst_player += 1 #probleme ici
 
             # confirm("end_of_turn")
-
-
 
             for index in range(mediane):
                 player_1_name = turn.matches[index].player_1[0].first_name

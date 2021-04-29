@@ -1,4 +1,5 @@
 import operator
+from datetime import datetime
 
 class Tournament:
     
@@ -7,8 +8,8 @@ class Tournament:
         self.name = ""
         self.place = ""
         self.date = ""
-        self.number_of_turn = 6
-        self.turn = []
+        self.number_of_turn = 4
+        self.turns = []
         self.players = []
         self.time_control = ""
         self.description = ""
@@ -33,7 +34,10 @@ class Player:
 class Turn:
     
     def __init__(self):
+        self.name = ""
         self.matches = []
+        self.start_date = ""
+        self.end_date = ""
 
  
 class Match:
@@ -86,6 +90,23 @@ def main():
             player_instance = create_player()
             tournament.players.append(player_instance)
 
+        for index in range(tournament.number_of_turn):
+            print("****************tour ******" + str(index))
+            create_turn(tournament)
+
+        def display_report:
+            print("list of players")
+            for player in tournament.players:
+                print(player)
+                
+            print("list of turns")
+            for turn in tournament.turns:
+                print(turn.name)
+
+            print("list of matches")
+            for match in tournament.turns.matches:
+                print(match.player_1[0].first_name, match.player_2[0].first_name )
+
         return tournament
 
 
@@ -97,18 +118,13 @@ def main():
 
         return match
 
+    def create_turn(tournament):
+        sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
 
-    def create_turn():
-        tournament_instance = create_tournament()
-        sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
-
-        # for element in sorted_players_by_rank:
-        #     print(element.first_name)
-        #     print(element.rank)
-
-        def first_turn():
+        def first_round():
             turn = Turn()
-            # total_players = len(sorted_players_by_rank)
+            turn.name = "Round 1"
+            turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
             mediane =round(len(sorted_players_by_rank)/2)
             worst_player = mediane
 
@@ -117,8 +133,9 @@ def main():
                 match = create_match(pair[0], pair[1])
                 turn.matches.append(match)
                 worst_player += 1
+                print(pair[0].first_name + " will play against " + pair[1].first_name)
 
-            # confirm("end_of_turn")
+            confirm("end_of_turn")
 
             for index in range(mediane):
                 player_1_name = turn.matches[index].player_1[0].first_name
@@ -133,21 +150,18 @@ def main():
                 turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
                 turn.matches[index].player_2.append(player_2_score)  #pourquoi ????
             
-            tournament_instance.turn.append(turn)
+            turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
+            tournament.turns.append(turn)
 
-        def after_first_turn():
+        def after_first_round(index):
             turn = Turn()
-            # sorted_players_by_score = sorted(tournament_instance.players, key=operator.attrgetter('score', 'rank'))
+            turn.name = "Round " + str(index + 2)
+            turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
             sorted_players_by_score = sorted(sorted_players_by_rank, key=operator.attrgetter('score'), reverse=True)
-
-            # for element in sorted_players_by_score:
-            #     print(element.first_name)
-            #     print(element.score)
 
             total_players = len(sorted_players_by_score)
             mediane =round(len(sorted_players_by_score)/2)
             players_already_in_game = []
-
 
             for i in range(total_players):
                 pair = []
@@ -175,8 +189,9 @@ def main():
 
                 match = create_match(pair[0], pair[1])
                 turn.matches.append(match)
+                print(pair[0].first_name + " will play against " + pair[1].first_name)
 
-            # confirm("end_of_turn")
+            confirm("end_of_turn")
 
             for index in range(mediane):
                 player_1_name = turn.matches[index].player_1[0].first_name
@@ -189,51 +204,29 @@ def main():
                 player_2_score = input("Enter " + player_2_name + "'s score : ")
                 turn.matches[index].player_2[0].score += int(player_2_score)
                 turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
-                turn.matches[index].player_2.append(player_2_score)  #pourquoi ????
-            
-            tournament_instance.turn.append(turn)
+                turn.matches[index].player_2.append(player_2_score) 
 
-        first_turn()
+            turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
+            tournament.turns.append(turn)
 
-        after_first_turn()
-        after_first_turn()
+        first_round()
+        confirm("begin_of_turn")
 
-        # confirm("begin_of_turn")
-        # print(tournament_instance.turn)
-        # print(tournament_instance.turn[0].matches)
-        # print(tournament_instance.turn[0].matches[0])
-        # print(tournament_instance.turn[0].matches[0].match)
-        # print(tournament_instance.players[0].score)
-        # print(tournament_instance.players[1].score)
-        # print(tournament_instance.players[2].score)
-        # print(tournament_instance.players[3].score)
+        number_of_turn = tournament.number_of_turn -1
+        for index in range(number_of_turn):
+            after_first_round(index)
+            if index < 2:
+                confirm("begin_of_turn")
 
-        # print(tournament_instance.players[0].players_played)
-        # print(tournament_instance.players[1].players_played)
-        # print(tournament_instance.players[2].players_played)
-        # print(tournament_instance.players[3].players_played)
+        for player in tournament.players:
+            player.players_played = []
 
-
-    test2 = create_turn()
+    create_tournament()
 
 main()
 
 
-# my_list = [2,3,4,5]
-# print(my_list)
-# my_list[0] += 2
-# print(my_list)
-
-
-
-#ajouter id joueur pour identifier
-#je pousse l'id du joueur dans le match et pas l'instance entière 
-#vue : controlller appelle une fonctionne qui va faire un print
-
-# match = [
-#     (["instance", 1],["instance2", 0]),
-#     (["instance4", 2],["instance3", 0]),
-# ]
-
-# print(match)
-# print(sorted(match, key=lambda x: x[1][1]))
+#faire les classements par ordre alphabétique et rank
+# différences les acteurs / les joueurs ?
+#liste tournois ? créer une méthode au dessus ?
+#liste match ? pas de nom, les instances ?

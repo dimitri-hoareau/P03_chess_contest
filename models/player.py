@@ -1,3 +1,5 @@
+from tinydb import Query
+
 class Player:
     def __init__(self, first_name,rank,id):
         self.id = "" 
@@ -9,10 +11,13 @@ class Player:
         self.score = 0  
         self.players_played = []
 
-    def create(self, first_name, rank, id, players_table):
+    def create(self,player, first_name, rank, players_table):
         serialized_player = {
             'first_name': first_name,
             'rank': rank,
-            'id': id
+            'id:': 0
         }
-        players_table.insert(serialized_player)
+
+        player.id = players_table.insert(serialized_player) 
+        players_table.update({'id': player.id}, doc_ids=[player.id])
+

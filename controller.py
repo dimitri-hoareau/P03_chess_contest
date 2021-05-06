@@ -36,10 +36,11 @@ def main():
         # player.birthday = input("Enter player's birthday: ")
         # player.sex = input("Enter player's sex: ")
         player.rank = input("Enter player's rank: ")
-        player.id = input("Enter player's id: ")
+        # player.id = input("Enter player's id: ")
+        # print(players_table.all())
 
         # voir combien de joueur il y a dans la base de donnée , l'id sera la clé, incrémentée de 1, ou mieux récupérer l'id en clé dans le dict
-        player.create(player.first_name, player.rank, player.id, players_table)
+        player.create(player, player.first_name, player.rank, players_table)
 
         return player
 
@@ -224,3 +225,5 @@ main()
 
 #faire 3 fichiers, MVC
 #un dossier modele avec chacun des modeles
+
+#git ignore : pycache ? db.json?

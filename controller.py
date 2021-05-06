@@ -1,54 +1,17 @@
 import operator
 from datetime import datetime
-
-class Tournament:
-    
-    def __init__(self):
-
-        self.name = ""
-        self.place = ""
-        self.date = ""
-        self.number_of_turn = 4
-        self.turns = []
-        self.players = []
-        self.time_control = ""
-        self.description = ""
-
-    # def add_player(self, player_instance):
-    #     self.players.append(player_instance)
-
-
-
-class Player:
-    def __init__(self):
-        self.id = "" 
-        self.first_name = ""
-        self.last_name = ""
-        self.birthday = ""
-        self.sex = ""
-        self.rank = 0
-        self.score = 0  #faire une fonction ?
-        self.players_played = []
-
-
-class Turn:
-    
-    def __init__(self):
-        self.name = ""
-        self.matches = []
-        self.start_date = ""
-        self.end_date = ""
-
- 
-class Match:
-    
-    def __init__(self):
-        self.player_1 = []
-        self.player_2 = []
-        self.match = self.player_1, self.player_2, 
-
+from tinydb import TinyDB
+from models.tournament import Tournament
+from models.player import Player
+from models.match import Match
+from models.turn import Turn
+from view import *
 
 def main():
+
+    db = TinyDB('db.json')
+    players_table = db.table('players')
+    tournaments_table = db.table('tournament')
 
     def confirm(action):
         """
@@ -66,46 +29,45 @@ def main():
 
         return answer == "y"
 
-
     def create_player():
-        player = Player()
+        player = Player(first_name="", rank=0, id="")
         player.first_name = input("Enter player's first name: ")
         # player.last_name = input("Enter player's last name: ")
         # player.birthday = input("Enter player's birthday: ")
         # player.sex = input("Enter player's sex: ")
         player.rank = input("Enter player's rank: ")
-        # player.id = input("Enter player's id: ")
+        player.id = input("Enter player's id: ")
+
+        # voir combien de joueur il y a dans la base de donnée , l'id sera la clé, incrémentée de 1, ou mieux récupérer l'id en clé dans le dict
+        player.create(player.first_name, player.rank, player.id, players_table)
+
         return player
 
     def create_tournament():
         tournament = Tournament()
 
-        # tournament.name =  input("Enter tournament's name: ")
+        tournament.name =  input("Enter tournament's name: ")
         # tournament.place = input("Enter tournament's place: ")
         # tournament.date = input("Enter tournament's date: ")
         # tournament.time_control = input("Enter tournament's time_control: ")
         # tournament.description = input("Enter tournament's description: ")
 
-        for index in range(6):
-            player_instance = create_player()
-            tournament.players.append(player_instance)
+        # player_id = input("Enter the id of the player " + str(index + 1) + " for this tournament : ")
+        player_id = input("Enter the id of the player for this tournament : ")
 
-        for index in range(tournament.number_of_turn):
-            print("****************tour ******" + str(index))
-            create_turn(tournament)
+        #tournament.get_player_for_tournament(player_id) => while true
+        # récuper l'instance sérializée dans un tableau # ou n'envoyer que l'id comme pk etrangere et l'envoyer
+        for index in range(2):
+            tournament.get_player_for_tournament(player_id, players_table, tournament)
 
-        def display_report:
-            print("list of players")
-            for player in tournament.players:
-                print(player)
-                
-            print("list of turns")
-            for turn in tournament.turns:
-                print(turn.name)
 
-            print("list of matches")
-            for match in tournament.turns.matches:
-                print(match.player_1[0].first_name, match.player_2[0].first_name )
+        # for index in range(tournament.number_of_turn):
+        #     print("****************tour ******" + str(index))
+        #     create_turn(tournament)
+
+        tournament.create(tournament.name, tournaments_table)
+
+        create_turn(tournament)
 
         return tournament
 
@@ -119,7 +81,11 @@ def main():
         return match
 
     def create_turn(tournament):
+        for element in tournament.players:
+            print(element.rank)
         sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
+        for element in sorted_players_by_rank:
+            print(element.rank)
 
         def first_round():
             turn = Turn()
@@ -133,6 +99,7 @@ def main():
                 match = create_match(pair[0], pair[1])
                 turn.matches.append(match)
                 worst_player += 1
+                #faire appel à une focntion qui fait un print et qui sera dans les vues
                 print(pair[0].first_name + " will play against " + pair[1].first_name)
 
             confirm("end_of_turn")
@@ -221,12 +188,39 @@ def main():
         for player in tournament.players:
             player.players_played = []
 
-    create_tournament()
+    def menu():
+        want_to_create_player = input("Do you want to create some players? [Y/N] ").lower()
+        if want_to_create_player == "y":
+            number_of_players = int(input("How many players do you want to create : "))
+            for index in range(number_of_players):
+                create_player()
+
+        want_to_create_tournament = input("Do you want to create a tournament? [Y/N] ").lower()
+        if want_to_create_tournament == "y":
+            create_tournament()
+
+        
+        # want_to_generate_report = input("Do you want to generate a report? [Y/N] ").lower()
+        #     if want_to_generate_report == "y":
+        #         generate_report()
+
+    menu()
 
 main()
 
-
+# il faut pouvoir ajouter des joueurs en dehors OK
 #faire les classements par ordre alphabétique et rank
-# différences les acteurs / les joueurs ?
-#liste tournois ? créer une méthode au dessus ?
-#liste match ? pas de nom, les instances ?
+# différences les acteurs / les joueurs ? Les acteurs c'est l'ensemble des joueuurs
+#liste tournois ? créer une méthode au dessus ? en fonction de l'input
+#liste match ? pas de nom, les instances ? joueurs et resultat
+#creer tournoi, créer joueur,démarrer tournoi,  arreter tpurnoi, generer rapport
+
+#serializer des instances ? comme tournament.players
+#players_table.truncate : on vide la db  chaque fois???
+#calculd es rangs ? les points lui font gagner des places dans le tournoi, mais par rapport a l'ensmble ? !!!!!!!!!!!
+
+#create_player
+#controller : les input
+
+#faire 3 fichiers, MVC
+#un dossier modele avec chacun des modeles

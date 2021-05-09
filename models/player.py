@@ -15,9 +15,16 @@ class Player:
         serialized_player = {
             'first_name': first_name,
             'rank': rank,
-            'id:': 0
         }
 
         player.id = players_table.insert(serialized_player) 
         players_table.update({'id': player.id}, doc_ids=[player.id])
 
+
+    # def update_score(self,player_id, player_score, players_table):
+    #     print(player_id)
+    #     print(player_score)
+    #     players_table.update({'score': player_score}, doc_ids=[player_id])
+
+
+    

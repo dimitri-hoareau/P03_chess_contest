@@ -5,7 +5,7 @@ from models.tournament import Tournament
 from models.player import Player
 from models.match import Match
 from models.turn import Turn
-from view import *
+from view import generate_report
 
 def main():
 
@@ -53,21 +53,16 @@ def main():
         # tournament.time_control = input("Enter tournament's time_control: ")
         # tournament.description = input("Enter tournament's description: ")
 
-        # player_id = input("Enter the id of the player " + str(index + 1) + " for this tournament : ")
-        player_id = input("Enter the id of the player for this tournament : ")
 
         #tournament.get_player_for_tournament(player_id) => while true
         # récuper l'instance sérializée dans un tableau # ou n'envoyer que l'id comme pk etrangere et l'envoyer
-        for index in range(2):
+        players_list = []
+        for index in range(6):
+            player_id = input("Enter the id of the player " + str(index + 1) + " for this tournament : ")
             tournament.get_player_for_tournament(player_id, players_table, tournament)
+            players_list.append(player_id) 
 
-
-        # for index in range(tournament.number_of_turn):
-        #     print("****************tour ******" + str(index))
-        #     create_turn(tournament)
-
-        tournament.create(tournament.name, tournaments_table)
-
+        tournament.create(tournament.name, tournaments_table, players_list)
         create_turn(tournament)
 
         return tournament
@@ -82,11 +77,11 @@ def main():
         return match
 
     def create_turn(tournament):
-        for element in tournament.players:
-            print(element.rank)
+        # for element in tournament.players:
+        #     print(element.rank)
         sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
-        for element in sorted_players_by_rank:
-            print(element.rank)
+        # for element in sorted_players_by_rank:
+        #     print(element.rank)
 
         def first_round():
             turn = Turn()
@@ -109,6 +104,10 @@ def main():
                 player_1_name = turn.matches[index].player_1[0].first_name
                 player_1_score = input("Enter " + player_1_name + "'s score : ")
                 turn.matches[index].player_1[0].score += int(player_1_score)
+                #score en BDD : inutile ?
+                # player_score = turn.matches[index].player_1[0].score
+                # player_id = turn.matches[index].player_1[0].id
+                # turn.matches[index].player_1[0].update_score(player_id, player_score, players_table)
                 turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0])
                 turn.matches[index].player_1.append(player_1_score)
 
@@ -201,9 +200,9 @@ def main():
             create_tournament()
 
         
-        # want_to_generate_report = input("Do you want to generate a report? [Y/N] ").lower()
-        #     if want_to_generate_report == "y":
-        #         generate_report()
+        want_to_generate_report = input("Do you want to generate a report? [Y/N] ").lower()
+        if want_to_generate_report == "y":
+            generate_report()
 
     menu()
 
@@ -212,18 +211,18 @@ main()
 # il faut pouvoir ajouter des joueurs en dehors OK
 #faire les classements par ordre alphabétique et rank
 # différences les acteurs / les joueurs ? Les acteurs c'est l'ensemble des joueuurs
-#liste tournois ? créer une méthode au dessus ? en fonction de l'input
 #liste match ? pas de nom, les instances ? joueurs et resultat
-#creer tournoi, créer joueur,démarrer tournoi,  arreter tpurnoi, generer rapport
 
-#serializer des instances ? comme tournament.players
-#players_table.truncate : on vide la db  chaque fois???
+#serializer des instances ? comme tournament.players ?? avec l'id
+#players_table.truncate : on vide la db  chaque fois??? NON
 #calculd es rangs ? les points lui font gagner des places dans le tournoi, mais par rapport a l'ensmble ? !!!!!!!!!!!
 
-#create_player
+#create_player OK
 #controller : les input
 
-#faire 3 fichiers, MVC
-#un dossier modele avec chacun des modeles
+#faire 3 fichiers, MVC OK
+#un dossier modele avec chacun des modeles OK
 
 #git ignore : pycache ? db.json?
+
+# le score en BDD ??

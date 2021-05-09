@@ -16,7 +16,7 @@ class Tournament:
 
     def get_player_for_tournament(self,player_id, players_table, tournament): 
         PlayerToFind = Query()
-        serialized_player = players_table.search(PlayerToFind.id == str(player_id)) #gérer si on entre un mauvais id, message et recommencer (while true ?)
+        serialized_player = players_table.search(PlayerToFind.id == int(player_id)) #gérer si on entre un mauvais id, message et recommencer (while true ?)
         player_instance = Player(first_name="", rank=0, id="")
         player_instance.first_name = serialized_player[0]['first_name']
         player_instance.rank =serialized_player[0]['rank']
@@ -24,10 +24,12 @@ class Tournament:
 
         tournament.players.append(player_instance)
 
-    def create(self, name, tournaments_table):
+    def create(self, name, tournaments_table, players_list):
         serialized_tournament = {
-            'name': name
-            # 'players': tournament.players
-            # ou alors juste l'id du player
+            'name': name,
+            'players': players_list
         }
+        print(serialized_tournament)
         tournaments_table.insert(serialized_tournament)
+
+

@@ -62,7 +62,7 @@ def main():
             tournament.get_player_for_tournament(player_id, players_table, tournament)
             players_list.append(player_id) 
 
-        tournament.create(tournament.name, tournaments_table, players_list)
+        tournament.create(tournament, tournaments_table, players_list)
         create_turn(tournament)
 
         return tournament
@@ -82,10 +82,10 @@ def main():
         sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
         # for element in sorted_players_by_rank:
         #     print(element.rank)
-
         def first_round():
             turn = Turn()
             turn.name = "Round 1"
+            turn.id = 1
             turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
             mediane =round(len(sorted_players_by_rank)/2)
             worst_player = mediane
@@ -119,14 +119,18 @@ def main():
             
             turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
             tournament.turns.append(turn)
+            #envoyer le tour 
+            tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
 
         def after_first_round(index):
             turn = Turn()
             turn.name = "Round " + str(index + 2)
+            turn.id = index + 2
             turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
             sorted_players_by_score = sorted(sorted_players_by_rank, key=operator.attrgetter('score'), reverse=True)
 
             total_players = len(sorted_players_by_score)
+            # print(total_players)
             mediane =round(len(sorted_players_by_score)/2)
             players_already_in_game = []
 
@@ -150,8 +154,13 @@ def main():
                     if len(pair) == 0:
                         setted_not_played_players = set(sorted_players_by_score) - set(players_already_in_game)
                         not_played_players = list(setted_not_played_players)
-                        pair = [sorted_players_by_score[i],not_played_players[1]]
-                        players_already_in_game.extend([sorted_players_by_score[i],not_played_players[1]])
+                        if sorted_players_by_score[i] is not not_played_players[0]:
+                            pair = [sorted_players_by_score[i],not_played_players[0]]
+                            players_already_in_game.extend([sorted_players_by_score[i],not_played_players[0]])
+                        else:
+                            pair = [sorted_players_by_score[i],not_played_players[1]]
+                            players_already_in_game.extend([sorted_players_by_score[i],not_played_players[1]])
+
                         break_loop = True
 
                 match = create_match(pair[0], pair[1])
@@ -176,6 +185,10 @@ def main():
             turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
             tournament.turns.append(turn)
 
+        # il faut pouvoir arreter le programme quand on veut, pas de sauvegarde a la fin !!!!!!!!!!!!!!!!
+
+
+        #start the creation of turns
         first_round()
         confirm("begin_of_turn")
 
@@ -189,40 +202,41 @@ def main():
             player.players_played = []
 
     def menu():
-        want_to_create_player = input("Do you want to create some players? [Y/N] ").lower()
-        if want_to_create_player == "y":
+        print("Welcome in the chess tournament generator. What do you want to do ?")
+        first_action = input("Create some players ? [1]. Create a tournament ? [2]. Resume a tournament ? [3]. Generate a report ? [4] ").lower()
+
+        if first_action == "1":
             number_of_players = int(input("How many players do you want to create : "))
             for index in range(number_of_players):
                 create_player()
 
-        want_to_create_tournament = input("Do you want to create a tournament? [Y/N] ").lower()
-        if want_to_create_tournament == "y":
+        elif first_action == "2":
             create_tournament()
 
-        
-        want_to_generate_report = input("Do you want to generate a report? [Y/N] ").lower()
-        if want_to_generate_report == "y":
+        # elif first_action == "3":
+        #     resume_tournament()
+
+        elif first_action == "4":
             generate_report()
 
     menu()
 
 main()
 
-# il faut pouvoir ajouter des joueurs en dehors OK
-#faire les classements par ordre alphabétique et rank
-# différences les acteurs / les joueurs ? Les acteurs c'est l'ensemble des joueuurs
-#liste match ? pas de nom, les instances ? joueurs et resultat
 
-#serializer des instances ? comme tournament.players ?? avec l'id
-#players_table.truncate : on vide la db  chaque fois??? NON
-#calculd es rangs ? les points lui font gagner des places dans le tournoi, mais par rapport a l'ensmble ? !!!!!!!!!!!
 
-#create_player OK
-#controller : les input
 
-#faire 3 fichiers, MVC OK
-#un dossier modele avec chacun des modeles OK
 
-#git ignore : pycache ? db.json?
+
+#git ignore : pycache OK ? db.json OK
 
 # le score en BDD ??
+
+
+# menu pour modifier le classement des joueurs.
+
+
+
+#resume tournament !!!!!!
+# tout enregistrer, numbre de tours, already played
+# et reprendre a nombre de tour + 1

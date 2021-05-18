@@ -1,3 +1,4 @@
+from operator import add
 from tinydb import Query
 
 class Player:
@@ -25,6 +26,15 @@ class Player:
     #     print(player_id)
     #     print(player_score)
     #     players_table.update({'score': player_score}, doc_ids=[player_id])
+
+    # def update_rank():
+    #     print(rank)
+
+    #def update_players_played():
+        # if 
+        # add
+        # if 
+        # delete
 
 
     

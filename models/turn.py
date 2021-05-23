@@ -12,9 +12,6 @@ class Turn:
         self.end_date = ""
 
     def create_match(self, player_1, player_2):
-        print("match *****************************")
-        print(player_1)
-        print(player_2)
         match = Match()
 
         match.player_1.append(player_1)
@@ -27,7 +24,6 @@ class Turn:
         turn.id = 1
         turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
         mediane =round(len(sorted_players_by_rank)/2)
-        print(mediane)
         worst_player = mediane
 
         for index in range(mediane):
@@ -59,12 +55,11 @@ class Turn:
         tournament.turns.append(turn)
         #envoyer le tour 
         tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
+        tournament.update_score(turn, tournaments_table, tournament.id)
 
 
 
     def after_first_round(self, index, tournament, sorted_players_by_rank, tournaments_table):
-        print("after first round **************************************")
-        print(sorted_players_by_rank)
         turn = Turn()
         turn.name = "Round " + str(index + 2)
         turn.id = index + 2
@@ -129,10 +124,12 @@ class Turn:
         turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
         tournament.turns.append(turn)
         tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
+        tournament.update_score(turn, tournaments_table, tournament.id)
 
 
     def turns_count(self,turns_left, tournament, sorted_players_by_rank, tournaments_table):
-        print("**********************************************turns_count")
+        pass
+        # print("**********************************************turns_count")
 
 
         for index in range(turns_left):

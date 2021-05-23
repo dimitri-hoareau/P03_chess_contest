@@ -82,6 +82,28 @@ class Tournament:
         # tournaments_table.insert(serialized_tournament)
 
 
+
+    def update_score(self,turn, tournaments_table, tournament_id):
+        matches = []
+        table_player = tournaments_table.get(doc_id= tournament_id)['players']
+        updated_table_player = []
+        turn_matches = turn.matches
+        for match in turn_matches:
+            # print(table_player)
+
+            # print(updated_table_player)
+            for player in table_player:
+                if player["id"] == match.match[0][0].id:
+                    player["score"] += int(match.match[0][1])
+                    updated_table_player.append(player)
+
+                elif player["id"] == match.match[1][0].id:
+                    player["score"] += int(match.match[1][1])
+                    updated_table_player.append(player)
+
+        # print(updated_table_player)
+        tournaments_table.update({'players': updated_table_player}, doc_ids=[tournament_id])
+
     # def add_turns_to_tournament(self,tournaments_table, turn_list, tournament_id):
     def add_turns_to_tournament(self,turn, tournaments_table, tournament_id):
         if type(tournament_id) is tuple:
@@ -97,15 +119,41 @@ class Tournament:
         # print(dir(turn_matches[0]))
 
         matches = []
+        # table_player = tournaments_table.get(doc_id= tournament_id)['players']
+        # updated_table_player = []
         for match in turn_matches:
+            # print(table_player)
+
+            # print(updated_table_player)
+            # for player in table_player:
+            #     if player["id"] == match.match[0][0].id:
+            #         player["score"] += int(match.match[0][1])
+            #         updated_table_player.append(player)
+
+            #     elif player["id"] == match.match[1][0].id:
+            #         player["score"] += int(match.match[1][1])
+            #         updated_table_player.append(player)
+
+
+
+            # tournaments_table.update({'players': table_player}, doc_ids=[tournament_id])
+
+
+            # player_score_to_update_one.score += match.match[0][1]
+            # tournaments_table.players.update({'score': player_score_to_update_one.score}, doc_ids=[match.match[0][0].id])
+
+            # player_score_to_update_two = tournaments_table.players.get(doc_id= match.match[1][0].id)
+            # player_score_to_update_two.score += match.match[1][1]
+            # tournaments_table.players.update({'score': player_score_to_update_two.score}, doc_ids=[match.match[1][0].id])
+
+   
+
             serialiazed_match = {
                 match.match[0][0].id : match.match[0][1],
                 match.match[1][0].id : match.match[1][1]
             }
             matches.append(serialiazed_match)
 
-
-        
         # serialiazed_match = {
         #     turn_matches[0].match[0][0].id : turn_matches[0].match[0][1],
         #     turn_matches[0].match[1][0].id : turn_matches[0].match[1][1]

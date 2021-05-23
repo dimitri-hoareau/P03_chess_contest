@@ -15,7 +15,7 @@ class Player:
     def create(self,player, first_name, rank, players_table):
         serialized_player = {
             'first_name': first_name,
-            'rank': rank,
+            'rank': int(rank),
         }
 
         player.id = players_table.insert(serialized_player) 

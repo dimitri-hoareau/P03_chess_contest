@@ -16,6 +16,8 @@ class Player:
         serialized_player = {
             'first_name': first_name,
             'rank': int(rank),
+            'score' : 0,
+            'players_played' : []
         }
 
         player.id = players_table.insert(serialized_player) 

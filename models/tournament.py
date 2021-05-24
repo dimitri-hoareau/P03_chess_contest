@@ -23,8 +23,21 @@ class Tournament:
         player_instance.first_name = serialized_player[0]['first_name']
         player_instance.rank =serialized_player[0]['rank']
         player_instance.id = serialized_player[0]['id']
+        player_instance.score = serialized_player[0]['score']
 
         tournament.players.append(player_instance)
+
+    def deserialized_player(self,players_list): 
+        instancinstancied_players_list = []
+        for player in players_list:
+            player_instance = Player(first_name="", rank=0, id="")
+            player_instance.first_name = player['first_name']
+            player_instance.rank =player['rank']
+            player_instance.id = player['id']
+            player_instance.score = player['score']
+            instancinstancied_players_list.append(player_instance)
+        print(instancinstancied_players_list)
+        return instancinstancied_players_list
 
         # return player_instance
 
@@ -84,6 +97,8 @@ class Tournament:
 
 
     def update_score(self,turn, tournaments_table, tournament_id):
+        if type(tournament_id) is tuple:
+            tournament_id = tournament_id[0]
         matches = []
         table_player = tournaments_table.get(doc_id= tournament_id)['players']
         updated_table_player = []

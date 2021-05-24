@@ -77,7 +77,11 @@ def main():
             tournament_instance.id = tournament["id"],
             # tournament_instance.id = tournament_instance.id[0],
             tournament_instance.name = tournament["name"],
-            tournament_instance.players = tournament["players"]
+
+            # tournament_instance.players = tournament["players"]
+            tournament_instance.players = tournament_instance.deserialized_player(tournament["players"])
+
+
             # tournament_instance.date = tournament["date"],
             tournament_instance.number_of_turns = tournament["number_of_turns"],
             tournament_instance.turns = tournament_instance.deserialize_turns(tournament["turns"]),
@@ -85,7 +89,9 @@ def main():
             # tournament_instance.time_control = tournament["time_control"],
             # tournament_instance.description = tournament["description"],
 
-            
+            tournament_instance.deserialized_player(tournament["players"])
+
+
             return tournament_instance
 
 
@@ -98,15 +104,16 @@ def main():
         if number_of_turns >= tournament["number_of_turns"]:
             print("This tournament is already finished")
         else:
-            print("You will resume the tournament : " + tournament["name"] + " from the turn number" + str(number_of_turns + 1))
+            print("You will resume the tournament : " + tournament["name"] + " from the turn number : " + str(number_of_turns + 1))
             tournament_instance = resume(tournament)
+
             turns_left = tournament_instance.number_of_turns[0] - number_of_turns
             sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
 
             #récupérer le rank a partir de l'id 
 
-            tournament_instance.turns[0].turns_count(turns_left, tournament_instance, tournament_instance.players, tournaments_table)
-            # tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table)
+            # tournament_instance.turns[0].turns_count(turns_left, tournament_instance, tournament_instance.players, tournaments_table)
+            tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table)
 
 
 
@@ -123,6 +130,7 @@ def main():
     def create_turn(tournament):
         # for element in tournament.players:
         #     print(element.rank)
+        print(tournament.players)
         sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
         # for element in sorted_players_by_rank:
         #     print(element.rank)

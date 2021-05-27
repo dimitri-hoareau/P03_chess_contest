@@ -35,8 +35,8 @@ class Tournament:
             player_instance.rank =player['rank']
             player_instance.id = player['id']
             player_instance.score = player['score']
+            player_instance.players_played = player['players_played']
             instancinstancied_players_list.append(player_instance)
-        print(instancinstancied_players_list)
         return instancinstancied_players_list
 
         # return player_instance
@@ -49,27 +49,6 @@ class Tournament:
             players_list_sorted.append(player.id)
         return players_list_sorted
 
-    # def sort_players_by_score(self, tournament):
-    #     for player in tournament.players:
-
-    #     sorte_players = sorted(tournament.players, key=operator.attrgetter('score'), reverse=True)
-    #     players_list_sorted = []
-    #     for player in sorte_players:
-    #         players_list_sorted.append(player.id)
-    #     return players_list_sorted
-
-    # def serialize_players(self, instance_player):
-    #     print(instance_player)
-    #     serialized_player = {
-    #        "id" : instance_player.id,
-    #        "first_name" : instance_player.first_name,
-    #     #    "last_name" : ""
-    #     #    "birthday" : ""
-    #     #    "sex" : ""
-    #        "rank" : instance_player.rank,
-    #        "score" : instance_player.score,
-    #     #    "players_played" = []
-    #     }
 
         
 
@@ -95,29 +74,58 @@ class Tournament:
         # tournaments_table.insert(serialized_tournament)
 
 
+#RENAME update socre and player played
 
     def update_score(self,turn, tournaments_table, tournament_id):
         if type(tournament_id) is tuple:
             tournament_id = tournament_id[0]
-        matches = []
+
         table_player = tournaments_table.get(doc_id= tournament_id)['players']
+        print('table_players / tournament83')
+        print(table_player)
         updated_table_player = []
         turn_matches = turn.matches
         for match in turn_matches:
-            # print(table_player)
-
-            # print(updated_table_player)
             for player in table_player:
                 if player["id"] == match.match[0][0].id:
+                    opposant_player_id = match.match[1][0].id
                     player["score"] += int(match.match[0][1])
+                    player["players_played"].append(opposant_player_id)
                     updated_table_player.append(player)
 
                 elif player["id"] == match.match[1][0].id:
+                    opposant_player_id = match.match[0][0].id
                     player["score"] += int(match.match[1][1])
+                    player["players_played"].append(opposant_player_id)
                     updated_table_player.append(player)
 
-        # print(updated_table_player)
+        print(updated_table_player)
         tournaments_table.update({'players': updated_table_player}, doc_ids=[tournament_id])
+
+
+
+    # def update_score(self,turn, tournaments_table, tournament_id):
+    #     if type(tournament_id) is tuple:
+    #         tournament_id = tournament_id[0]
+    #     matches = []
+    #     table_player = tournaments_table.get(doc_id= tournament_id)['players']
+    #     updated_table_player = []
+    #     turn_matches = turn.matches
+    #     for match in turn_matches:
+    #         # print(table_player)
+
+    #         # print(updated_table_player)
+    #         for player in table_player:
+    #             if player["id"] == match.match[0][0].id:
+    #                 player["score"] += int(match.match[0][1])
+    #                 updated_table_player.append(player)
+
+    #             elif player["id"] == match.match[1][0].id:
+    #                 player["score"] += int(match.match[1][1])
+    #                 updated_table_player.append(player)
+
+    #     # print(updated_table_player)
+    #     tournaments_table.update({'players': updated_table_player}, doc_ids=[tournament_id])
 
     # def add_turns_to_tournament(self,tournaments_table, turn_list, tournament_id):
     def add_turns_to_tournament(self,turn, tournaments_table, tournament_id):
@@ -189,18 +197,6 @@ class Tournament:
         # print (tournaments_table)
 
         tournaments_table.update({'turns': table_turns}, doc_ids=[tournament_id])
-
-    # def resume(tournament):
-    #     tournament_instance = Tournament()
-    #     tournament_instance.id = tournament["id"],
-    #     tournament_instance.name = tournament["name"],
-    #     tournament_instance.date = tournament["date"],
-    #     tournament_instance.number_of_turns = tournament["number_of_turns"],
-    #     tournament_instance.turns = tournament["turns"],
-    #     tournament_instance.time_control = tournament["time_control"],
-    #     tournament_instance.description = tournament["description"],
-
-    #     print(tournament_instance)
 
 
     def deserialize_turns(self,serialized_turns):

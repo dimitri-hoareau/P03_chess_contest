@@ -38,22 +38,17 @@ class Turn:
             player_1_name = turn.matches[index].player_1[0].first_name
             player_1_score = input("Enter " + player_1_name + "'s score : ")
             turn.matches[index].player_1[0].score += int(player_1_score)
-            #score en BDD : inutile ?
-            # player_score = turn.matches[index].player_1[0].score
-            # player_id = turn.matches[index].player_1[0].id
-            # turn.matches[index].player_1[0].update_score(player_id, player_score, players_table)
-            turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0])
+            turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0].id)
             turn.matches[index].player_1.append(player_1_score)
 
             player_2_name = turn.matches[index].player_2[0].first_name
             player_2_score = input("Enter " + player_2_name + "'s score : ")
             turn.matches[index].player_2[0].score += int(player_2_score)
-            turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
-            turn.matches[index].player_2.append(player_2_score)  #pourquoi ????
+            turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0].id)
+            turn.matches[index].player_2.append(player_2_score)  
         
         turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
         tournament.turns.append(turn)
-        #envoyer le tour 
         tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
         tournament.update_score(turn, tournaments_table, tournament.id)
 
@@ -65,14 +60,16 @@ class Turn:
         turn.id = index + 2
         turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
         sorted_players_by_score = sorted(sorted_players_by_rank, key=operator.attrgetter('score'), reverse=True)
-        # sorted_players_by_score = tournament.sort_players_by_score(tournament)
 
         total_players = len(sorted_players_by_score)
-        # print(total_players)
         mediane =round(len(sorted_players_by_score)/2)
         players_already_in_game = []
 
+        print("sorted players by score turn/68")
+
         for i in range(total_players):
+            # quand on reprend un tournoi, le tableau est vide 
+            print(sorted_players_by_score[i].players_played)
             pair = []
             if sorted_players_by_score[i] in players_already_in_game:
                 continue
@@ -80,8 +77,7 @@ class Turn:
                 total_players_iterations = total_players - 1
                 for j in range(total_players_iterations):
                     break_loop = False
-                    #variable pour chaque statement ?
-                    if ((i + (j + 1)) <= (len(sorted_players_by_score) - 1)) and (sorted_players_by_score[i + (j + 1)] not in sorted_players_by_score[i].players_played) and (sorted_players_by_score[i + (j + 1)] not in players_already_in_game):
+                    if ((i + (j + 1)) <= (len(sorted_players_by_score) - 1)) and (sorted_players_by_score[i + (j + 1)].id not in sorted_players_by_score[i].players_played) and (sorted_players_by_score[i + (j + 1)] not in players_already_in_game):
                         pair = [sorted_players_by_score[i],sorted_players_by_score[i + (j + 1)]]
                         players_already_in_game.extend([sorted_players_by_score[i],sorted_players_by_score[i + (j + 1)]])
                         break_loop = True
@@ -112,13 +108,13 @@ class Turn:
             player_1_name = turn.matches[index].player_1[0].first_name
             player_1_score = input("Enter " + player_1_name + "'s score : ")
             turn.matches[index].player_1[0].score += int(player_1_score)
-            turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0])
+            turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0].id)
             turn.matches[index].player_1.append(player_1_score)
 
             player_2_name = turn.matches[index].player_2[0].first_name
             player_2_score = input("Enter " + player_2_name + "'s score : ")
             turn.matches[index].player_2[0].score += int(player_2_score)
-            turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
+            turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0].id)
             turn.matches[index].player_2.append(player_2_score) 
 
         turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
@@ -128,17 +124,17 @@ class Turn:
 
 
     def turns_count(self,turns_left, tournament, sorted_players_by_rank, tournaments_table):
-        pass
-        # print("**********************************************turns_count")
-
+        # pass
 
         for index in range(turns_left):
+            for player in sorted_players_by_rank:
+                print(player.id)
             self.after_first_round(index, tournament, sorted_players_by_rank, tournaments_table)
-            if index < 2:
+            if index < 2: # 2 doit etre dynamique
                 # confirm("begin_of_turn")
-                print("hey")
+                print("*************************************")
 
-        for player in tournament.players:
-            player.players_played = []
+        # for player in tournament.players:
+        #     player.players_played = []
 
     

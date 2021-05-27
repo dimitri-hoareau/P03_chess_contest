@@ -75,13 +75,8 @@ def main():
         def resume(tournament):
             tournament_instance = Tournament()
             tournament_instance.id = tournament["id"],
-            # tournament_instance.id = tournament_instance.id[0],
             tournament_instance.name = tournament["name"],
-
-            # tournament_instance.players = tournament["players"]
             tournament_instance.players = tournament_instance.deserialized_player(tournament["players"])
-
-
             # tournament_instance.date = tournament["date"],
             tournament_instance.number_of_turns = tournament["number_of_turns"],
             tournament_instance.turns = tournament_instance.deserialize_turns(tournament["turns"]),
@@ -89,7 +84,7 @@ def main():
             # tournament_instance.time_control = tournament["time_control"],
             # tournament_instance.description = tournament["description"],
 
-            tournament_instance.deserialized_player(tournament["players"])
+            # tournament_instance.deserialized_player(tournament["players"])
 
 
             return tournament_instance
@@ -109,153 +104,23 @@ def main():
 
             turns_left = tournament_instance.number_of_turns[0] - number_of_turns
             sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
+            # print(sorted_players_by_rank)
+            # for player in sorted_players_by_rank:
+            #     print(player.id)
 
-            #récupérer le rank a partir de l'id 
-
-            # tournament_instance.turns[0].turns_count(turns_left, tournament_instance, tournament_instance.players, tournaments_table)
             tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table)
 
 
-
-
-
-    # def create_match(player_1, player_2):
-    #     match = Match()
-
-    #     match.player_1.append(player_1)
-    #     match.player_2.append(player_2)
-
-    #     return match
-
     def create_turn(tournament):
-        # for element in tournament.players:
-        #     print(element.rank)
-        print(tournament.players)
+
         sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
-        # for element in sorted_players_by_rank:
-        #     print(element.rank)
+        # print(sorted_players_by_rank)
+        # for player in sorted_players_by_rank:
+        #     print(player.id)
         turn = Turn()
         turn.first_round(turn, sorted_players_by_rank, tournament, tournaments_table)
         turns_left = tournament.number_of_turn -1
         turn.turns_count(turns_left, tournament, sorted_players_by_rank, tournaments_table)
-        # def first_round():
-        #     turn.name = "Round 1"
-        #     turn.id = 1
-        #     turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
-        #     mediane =round(len(sorted_players_by_rank)/2)
-        #     worst_player = mediane
-
-        #     for index in range(mediane):
-        #         pair = [sorted_players_by_rank[index],sorted_players_by_rank[worst_player]]
-        #         match = create_match(pair[0], pair[1])
-        #         turn.matches.append(match)
-        #         worst_player += 1
-        #         #faire appel à une focntion qui fait un print et qui sera dans les vues
-        #         print(pair[0].first_name + " will play against " + pair[1].first_name)
-
-        #     confirm("end_of_turn")
-
-            # for index in range(mediane):
-            #     player_1_name = turn.matches[index].player_1[0].first_name
-            #     player_1_score = input("Enter " + player_1_name + "'s score : ")
-            #     turn.matches[index].player_1[0].score += int(player_1_score)
-            #     #score en BDD : inutile ?
-            #     # player_score = turn.matches[index].player_1[0].score
-            #     # player_id = turn.matches[index].player_1[0].id
-            #     # turn.matches[index].player_1[0].update_score(player_id, player_score, players_table)
-            #     turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0])
-            #     turn.matches[index].player_1.append(player_1_score)
-
-            #     player_2_name = turn.matches[index].player_2[0].first_name
-            #     player_2_score = input("Enter " + player_2_name + "'s score : ")
-            #     turn.matches[index].player_2[0].score += int(player_2_score)
-            #     turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
-            #     turn.matches[index].player_2.append(player_2_score)  #pourquoi ????
-            
-            # turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
-            # tournament.turns.append(turn)
-            # #envoyer le tour 
-            # tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
-
-        # def after_first_round(index):
-        #     turn = Turn()
-        #     turn.name = "Round " + str(index + 2)
-        #     turn.id = index + 2
-        #     turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
-        #     sorted_players_by_score = sorted(sorted_players_by_rank, key=operator.attrgetter('score'), reverse=True)
-
-        #     total_players = len(sorted_players_by_score)
-        #     # print(total_players)
-        #     mediane =round(len(sorted_players_by_score)/2)
-        #     players_already_in_game = []
-
-        #     for i in range(total_players):
-        #         pair = []
-        #         if sorted_players_by_score[i] in players_already_in_game:
-        #             continue
-        #         else:
-        #             total_players_iterations = total_players - 1
-        #             for j in range(total_players_iterations):
-        #                 break_loop = False
-        #                 #variable pour chaque statement ?
-        #                 if ((i + (j + 1)) <= (len(sorted_players_by_score) - 1)) and (sorted_players_by_score[i + (j + 1)] not in sorted_players_by_score[i].players_played) and (sorted_players_by_score[i + (j + 1)] not in players_already_in_game):
-        #                     pair = [sorted_players_by_score[i],sorted_players_by_score[i + (j + 1)]]
-        #                     players_already_in_game.extend([sorted_players_by_score[i],sorted_players_by_score[i + (j + 1)]])
-        #                     break_loop = True
-                        
-        #                 if break_loop:
-        #                     break
-
-        #             if len(pair) == 0:
-        #                 setted_not_played_players = set(sorted_players_by_score) - set(players_already_in_game)
-        #                 not_played_players = list(setted_not_played_players)
-        #                 if sorted_players_by_score[i] is not not_played_players[0]:
-        #                     pair = [sorted_players_by_score[i],not_played_players[0]]
-        #                     players_already_in_game.extend([sorted_players_by_score[i],not_played_players[0]])
-        #                 else:
-        #                     pair = [sorted_players_by_score[i],not_played_players[1]]
-        #                     players_already_in_game.extend([sorted_players_by_score[i],not_played_players[1]])
-
-        #                 break_loop = True
-
-        #         match = create_match(pair[0], pair[1])
-        #         turn.matches.append(match)
-        #         print(pair[0].first_name + " will play against " + pair[1].first_name)
-
-        #     confirm("end_of_turn")
-
-        #     for index in range(mediane):
-        #         player_1_name = turn.matches[index].player_1[0].first_name
-        #         player_1_score = input("Enter " + player_1_name + "'s score : ")
-        #         turn.matches[index].player_1[0].score += int(player_1_score)
-        #         turn.matches[index].player_1[0].players_played.append(turn.matches[index].player_2[0])
-        #         turn.matches[index].player_1.append(player_1_score)
-
-        #         player_2_name = turn.matches[index].player_2[0].first_name
-        #         player_2_score = input("Enter " + player_2_name + "'s score : ")
-        #         turn.matches[index].player_2[0].score += int(player_2_score)
-        #         turn.matches[index].player_2[0].players_played.append(turn.matches[index].player_1[0])
-        #         turn.matches[index].player_2.append(player_2_score) 
-
-        #     turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
-        #     tournament.turns.append(turn)
-        #     tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
-
-        # def turns_count(number_of_turn):
-        #     for index in range(number_of_turn):
-        #         after_first_round(index)
-        #         if index < 2:
-        #             confirm("begin_of_turn")
-
-        #     for player in tournament.players:
-        #         player.players_played = []
-
-        #start the creation of turns
-        # first_round()
-        # confirm("begin_of_turn")
-
-        # number_of_turn = tournament.number_of_turn -1
-        # turns_count(number_of_turn)
 
 
 
@@ -275,8 +140,32 @@ def main():
             resume_tournament()
 
         elif first_action == "4":
-            generate_report()
-
+            print("Select the type of report you want to generate : ")
+            type_of_report = input("List for all players ? [1]. List for player's tournament ? [2]. List of tournaments ? [3]. Liste of turns ? [4]. Liste of matchs ? [5] ").lower()
+            if type_of_report == "1":
+                print("What type of list ? ")
+                type_of_list = input("Ordered list by name ? [1]. Ordered list by rank ? [2]").lower()
+                if type_of_list == "1":
+                    generate_report(players_table, tournaments_table, "all_players_by_name")
+                elif type_of_list == "2":
+                    generate_report(players_table, tournaments_table, "all_players_by_rank")
+            elif type_of_report == "2":
+                tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
+                print("What type of list ? ")
+                type_of_list = input("Ordered list by name ? [1]. Ordered list by rank ? [2]").lower()
+                if type_of_list == "1":
+                    generate_report(players_table, tournaments_table, "tournament_players_by_name", tournament_id)
+                elif type_of_list == "2":
+                    generate_report(players_table, tournaments_table, "tournament_players_by_rank", tournament_id)
+            elif type_of_report == "3":
+                generate_report(players_table, tournaments_table, "tournaments_list")
+            elif type_of_report == "4":
+                tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
+                generate_report(players_table, tournaments_table, "tournaments_turns_list", tournament_id)
+            elif type_of_report == "5":
+                tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
+                generate_report(players_table, tournaments_table, "tournaments_matchs_list", tournament_id)
+            
     menu()
 
 main()
@@ -287,22 +176,7 @@ main()
 
 
 #git ignore : pycache OK ? db.json OK
-
-# le score en BDD ??
-
-
-# menu pour modifier le classement des joueurs.
-
-
-
-#resume tournament !!!!!!
-# tout enregistrer, numbre de tours, already played // compter le nombre de tour en bdd
-# et reprendre a nombre de tour + 1
-
-#is the turn is completed ?
-
 # do you want to pursuit the tournament ? or quit for resume later ?
 
+# tournament_instance.turns[0].turns_count(turns_left, tournament_instance, tournament_instance.players, tournaments_table) // si aucun tour : erreur
 
-            # tournament_instance.turns[0].turns_count(turns_left, tournament_instance, tournament_instance.players, tournaments_table) // si aucun tour : erreur
-            #ex : si pas de turn, supprimer tournoi

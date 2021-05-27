@@ -1,48 +1,52 @@
-    
+import operator
 from tinydb import Query
+
+
     
-def generate_report(self, players_table, tournaments_table):
-    def actors_list():
-        def by_name():
-            print("list of players")
-            for player in tournament.players:
-                print(player)
+def generate_report(players_table, tournaments_table, type_of_list, tournament_id=0):
 
-        def by_rank():
-            print("list of players")
-            for player in tournament.players:
-                print(player)
-
-    def tournament_players_list():
-        def by_name():
-            print("list of players")
-            for player in tournament.players:
-                print(player)
-
-        def by_rank():
-            print("list of players")
-            for player in tournament.players:
-                print(player)
-
-    def tournaments_list():
-        print("list of tournaments")
-        for player in tournament.players:
+    if type_of_list == "all_players_by_name":
+        print("List of all players by name : ")
+        players = players_table.all()
+        sorted_players = sorted(players, key=lambda k: k['first_name']) 
+        for player in sorted_players:
+            print(player)
+    elif type_of_list == "all_players_by_rank":
+        print("List of all players by name : ")
+        players = players_table.all()
+        sorted_players = sorted(players, key=lambda k: k['rank']) 
+        for player in sorted_players:
+            print(player)
+    elif type_of_list == "tournament_players_by_name":
+        tournament = tournaments_table.get(doc_id=tournament_id)
+        print("List of players ordered by name for the tournament : " + tournament["name"])
+        players = tournament["players"]
+        sorted_players = sorted(players, key=lambda k: k['first_name'])
+        for player in sorted_players:
             print(player)
 
-    def tournament_turns_list():
-        print("list of tournaments")
-        for player in tournament.players:
+    elif type_of_list == "tournament_players_by_rank":
+        tournament = tournaments_table.get(doc_id=tournament_id)
+        print("List of players ordered by name for the tournament : " + tournament["name"])
+        players = tournament["players"]
+        sorted_players = sorted(players, key=lambda k: k['rank'])
+        for player in sorted_players:
             print(player)
 
-    def tournament_matchs_list():
-        print("list of tournaments")
-        for player in tournament.players:
-            print(player)
-        
-    # print("list of turns")
-    # for turn in tournament.turns:
-    #     print(turn.name)
+    elif type_of_list == "tournaments_list":
+        tournaments = tournaments_table.all()
+        print("List of all tournaments : ")
+        for tournament in tournaments:
+            print(tournament)
 
-    # print("list of matches")
-    # for match in tournament.turns.matches:
-    #     print(match.player_1[0].first_name, match.player_2[0].first_name)
+    elif type_of_list == "tournaments_turns_list":
+        tournament = tournaments_table.get(doc_id=tournament_id)
+        print("List of all turns for the tournament : " + tournament["name"])
+        for turn in tournament["turns"]:
+            print(turn)
+
+    elif type_of_list == "tournaments_matchs_list":
+        tournament = tournaments_table.get(doc_id=tournament_id)
+        print("List of all matchs for the tournament : " + tournament["name"])
+        for turn in tournament["turns"]:
+            print(turn["match"])

@@ -3,7 +3,6 @@ from models.match import Match
 import operator
 
 class Turn:
-    
     def __init__(self):
         self.id = 0
         self.name = ""
@@ -19,7 +18,7 @@ class Turn:
 
         return match
 
-    def first_round(self, turn, sorted_players_by_rank, tournament, tournaments_table):
+    def first_round(self, turn, sorted_players_by_rank, tournament, tournaments_table, confirm):
         turn.name = "Round 1"
         turn.id = 1
         turn.start_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
@@ -31,8 +30,9 @@ class Turn:
             match = self.create_match(pair[0], pair[1])
             turn.matches.append(match)
             worst_player += 1
-            #faire appel à une focntion qui fait un print et qui sera dans les vues
             print(pair[0].first_name + " will play against " + pair[1].first_name)
+
+        confirm("end_of_turn")
 
         for index in range(mediane):
             player_1_name = turn.matches[index].player_1[0].first_name
@@ -50,11 +50,13 @@ class Turn:
         turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
         tournament.turns.append(turn)
         tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
-        tournament.update_score(turn, tournaments_table, tournament.id)
+        tournament.update_score_and_players_played(turn, tournaments_table, tournament.id)
+
+        confirm("continue_quit_updateRank",tournament)
 
 
 
-    def after_first_round(self, index, tournament, sorted_players_by_rank, tournaments_table):
+    def after_first_round(self, index, tournament, sorted_players_by_rank, tournaments_table, confirm):
         turn = Turn()
         turn.name = "Round " + str(index + 2)
         turn.id = index + 2
@@ -65,11 +67,7 @@ class Turn:
         mediane =round(len(sorted_players_by_score)/2)
         players_already_in_game = []
 
-        print("sorted players by score turn/68")
-
         for i in range(total_players):
-            # quand on reprend un tournoi, le tableau est vide 
-            print(sorted_players_by_score[i].players_played)
             pair = []
             if sorted_players_by_score[i] in players_already_in_game:
                 continue
@@ -101,8 +99,7 @@ class Turn:
             turn.matches.append(match)
             print(pair[0].first_name + " will play against " + pair[1].first_name)
 
-        # confirm("end_of_turn")
-        print("end of turn")
+        confirm("end_of_turn")
 
         for index in range(mediane):
             player_1_name = turn.matches[index].player_1[0].first_name
@@ -120,21 +117,16 @@ class Turn:
         turn.end_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
         tournament.turns.append(turn)
         tournament.add_turns_to_tournament(turn, tournaments_table, tournament.id)
-        tournament.update_score(turn, tournaments_table, tournament.id)
+        tournament.update_score_and_players_played(turn, tournaments_table, tournament.id)
+
+        confirm("continue_quit_updateRank", tournament)
 
 
-    def turns_count(self,turns_left, tournament, sorted_players_by_rank, tournaments_table):
-        # pass
+    def turns_count(self,turns_left, tournament, sorted_players_by_rank, tournaments_table, confirm):
 
         for index in range(turns_left):
-            for player in sorted_players_by_rank:
-                print(player.id)
-            self.after_first_round(index, tournament, sorted_players_by_rank, tournaments_table)
-            if index < 2: # 2 doit etre dynamique
+            self.after_first_round(index, tournament, sorted_players_by_rank, tournaments_table, confirm)
+            # if index < 2: # 2 doit etre dynamique
                 # confirm("begin_of_turn")
-                print("*************************************")
+      
 
-        # for player in tournament.players:
-        #     player.players_played = []
-
-    

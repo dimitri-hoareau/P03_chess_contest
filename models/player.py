@@ -22,21 +22,3 @@ class Player:
 
         player.id = players_table.insert(serialized_player) 
         players_table.update({'id': player.id}, doc_ids=[player.id])
-
-
-    # def update_score(self,player_id, player_score, players_table):
-    #     print(player_id)
-    #     print(player_score)
-    #     players_table.update({'score': player_score}, doc_ids=[player_id])
-
-    # def update_rank():
-    #     print(rank)
-
-    #def update_players_played():
-        # if 
-        # add
-        # if 
-        # delete
-
-
-    

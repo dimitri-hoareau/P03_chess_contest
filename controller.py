@@ -7,39 +7,63 @@ from models.match import Match
 from models.turn import Turn
 from view import generate_report
 
+db = TinyDB('db.json')
+players_table = db.table('players')
+tournaments_table = db.table('tournament')
+
+
+def confirm(action, tournament=None):
+    """
+    Ask user to enter Y or N (case-insensitive).
+    :return: True if the answer is Y.
+    :rtype: bool
+    """
+    answer = ""
+    if action == "end_of_turn":
+        while answer not in ["y"]:
+            answer = input("Is the turn completed? [Y/N] ").lower()
+
+    elif action == "continue_quit_updateRank":
+        print("What do you want to do ?")
+        answer = input("Continue ? [1]. Quit tournament ? [2]. Update a player rank ? [3]").lower()
+        if answer =="1":
+            pass
+        elif answer == "2":
+            print("To resume later the tournament, please note this following id : " + str(tournament.id))
+            quit()
+        elif answer == "3":
+            player_id = int(input("Enter the id of the player you are looking for for : "))
+            player_rank = int(input("Enter the the new rank for this player : "))
+
+            #update player table
+            players_table.update({'rank': player_rank}, doc_ids=[player_id])
+
+            #update player in tournament instance in base
+            tournament.update_rank(tournaments_table, tournament.id, player_id, player_rank)
+
+            #update player in tournament instance
+            tournament = tournaments_table.get(doc_id=tournament.id)
+            for player in tournament["players"]:
+                if player["id"] == player_id:
+                    player["rank"] = player_rank
+
+    return answer == "y"
+
 def main():
 
-    db = TinyDB('db.json')
-    players_table = db.table('players')
-    tournaments_table = db.table('tournament')
-
-    def confirm(action):
-        """
-        Ask user to enter Y or N (case-insensitive).
-        :return: True if the answer is Y.
-        :rtype: bool
-        """
-        answer = ""
-        if action == "end_of_turn":
-            while answer not in ["y"]:
-                answer = input("Is the turn completed? [Y/N] ").lower()
-        else:
-            while answer not in ["y"]:
-                answer = input("Do you want to start a new turn? [Y/N] ").lower()
-
-        return answer == "y"
+    # db = TinyDB('db.json')
+    # players_table = db.table('players')
+    # tournaments_table = db.table('tournament')
 
     def create_player():
         player = Player(first_name="", rank=0, id="")
+
         player.first_name = input("Enter player's first name: ")
         # player.last_name = input("Enter player's last name: ")
         # player.birthday = input("Enter player's birthday: ")
         # player.sex = input("Enter player's sex: ")
         player.rank = input("Enter player's rank: ")
-        # player.id = input("Enter player's id: ")
-        # print(players_table.all())
 
-        # voir combien de joueur il y a dans la base de donnée , l'id sera la clé, incrémentée de 1, ou mieux récupérer l'id en clé dans le dict
         player.create(player, player.first_name, player.rank, players_table)
 
         return player
@@ -53,17 +77,11 @@ def main():
         # tournament.time_control = input("Enter tournament's time_control: ")
         # tournament.description = input("Enter tournament's description: ")
 
-
-        #tournament.get_player_for_tournament(player_id) => while true
-        # récuper l'instance sérializée dans un tableau # ou n'envoyer que l'id comme pk etrangere et l'envoyer
         players_list = []
         for index in range(6):
             player_id = int(input("Enter the id of the player " + str(index + 1) + " for this tournament : "))
             tournament.get_player_for_tournament(player_id, players_table, tournament)
-            # instance_player = tournament.get_player_for_tournament(player_id, players_table, tournament)
-            # serialized_player = tournament.serialize_players(instance_player)
 
-            # players_list.append(player_id) 
         players_list = tournament.sort_players_by_rank(tournament)
         tournament.create(tournament, tournaments_table, players_list, players_table)
         create_turn(tournament)
@@ -84,45 +102,35 @@ def main():
             # tournament_instance.time_control = tournament["time_control"],
             # tournament_instance.description = tournament["description"],
 
-            # tournament_instance.deserialized_player(tournament["players"])
-
-
             return tournament_instance
 
 
         tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
         tournament = tournaments_table.get(doc_id=tournament_id)
-
-
         number_of_turns = len(tournament["turns"])
 
         if number_of_turns >= tournament["number_of_turns"]:
             print("This tournament is already finished")
         else:
             print("You will resume the tournament : " + tournament["name"] + " from the turn number : " + str(number_of_turns + 1))
+            
             tournament_instance = resume(tournament)
-
             turns_left = tournament_instance.number_of_turns[0] - number_of_turns
             sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
-            # print(sorted_players_by_rank)
-            # for player in sorted_players_by_rank:
-            #     print(player.id)
 
-            tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table)
+            try:
+                tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table)
+            except:
+                create_turn(tournament_instance)
 
 
     def create_turn(tournament):
 
         sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
-        # print(sorted_players_by_rank)
-        # for player in sorted_players_by_rank:
-        #     print(player.id)
         turn = Turn()
-        turn.first_round(turn, sorted_players_by_rank, tournament, tournaments_table)
+        turn.first_round(turn, sorted_players_by_rank, tournament, tournaments_table, confirm)
         turns_left = tournament.number_of_turn -1
-        turn.turns_count(turns_left, tournament, sorted_players_by_rank, tournaments_table)
-
-
+        turn.turns_count(turns_left, tournament, sorted_players_by_rank, tournaments_table, confirm)
 
     def menu():
         print("Welcome in the chess tournament generator. What do you want to do ?")
@@ -176,7 +184,10 @@ main()
 
 
 #git ignore : pycache OK ? db.json OK
-# do you want to pursuit the tournament ? or quit for resume later ?
+#faire le cours python maintenabale pour pep8
 
-# tournament_instance.turns[0].turns_count(turns_left, tournament_instance, tournament_instance.players, tournaments_table) // si aucun tour : erreur
-
+# update rank
+# affichage joli view
+#decommenter et mettre toutes les valeurs
+#test
+#flake

@@ -2,7 +2,7 @@ from operator import add
 from tinydb import Query
 
 class Player:
-    def __init__(self, first_name,rank,id):
+    def __init__(self, first_name, last_name, birthday, sex, rank,id):
         self.id = "" 
         self.first_name = ""
         self.last_name = ""
@@ -12,12 +12,15 @@ class Player:
         self.score = 0  
         self.players_played = []
 
-    def create(self,player, first_name, rank, players_table):
+    def create(self,player, first_name, last_name, birthday, sex, rank, players_table):
         serialized_player = {
             'first_name': first_name,
+            'last_name': last_name,
+            'birthday': birthday,
+            'sex': sex,
             'rank': int(rank),
             'score' : 0,
-            'players_played' : []
+            'players_played' : [],
         }
 
         player.id = players_table.insert(serialized_player) 

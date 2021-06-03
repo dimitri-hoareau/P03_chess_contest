@@ -11,6 +11,41 @@ db = TinyDB('db.json')
 players_table = db.table('players')
 tournaments_table = db.table('tournament')
 
+def resume(tournament):
+    tournament_instance = Tournament()
+    print(tournament_instance)
+    print(tournament)
+    tournament_instance.id = tournament["id"],
+    tournament_instance.name = tournament["name"],
+    tournament_instance.players = tournament_instance.deserialized_player(tournament["players"])
+    tournament_instance.date = tournament["date"],
+    tournament_instance.number_of_turns = tournament["number_of_turns"],
+    tournament_instance.turns = tournament_instance.deserialize_turns(tournament["turns"]),
+    tournament_instance.turns = tournament_instance.turns[0] # because it return a tuple 
+    tournament_instance.time_control = tournament["time_control"],
+    tournament_instance.description = tournament["description"],
+
+    return tournament_instance
+
+def update_player_rank(tournament=None):
+
+    player_id = int(input("Enter the id of the player you are looking for for : "))
+    player_rank = int(input("Enter the the new rank for this player : "))
+
+    #update player table
+    players_table.update({'rank': player_rank}, doc_ids=[player_id])
+
+    #update player in tournament instance in base
+    tournament.update_rank(tournaments_table, tournament.id, player_id, player_rank)
+
+    #update player in tournament instance
+    if type(tournament.id) is tuple:
+        tournament.id = tournament.id[0]
+    tournament = tournaments_table.get(doc_id=tournament.id)
+    for player in tournament["players"]:
+        if player["id"] == player_id:
+            player["rank"] = player_rank
+
 
 def confirm(action, tournament=None):
     """
@@ -24,7 +59,7 @@ def confirm(action, tournament=None):
             answer = input("Is the turn completed? [Y/N] ").lower()
 
     elif action == "continue_quit_updateRank":
-        print("What do you want to do ?")
+        print("This turn is over. What do you want to do ?")
         answer = input("Continue ? [1]. Quit tournament ? [2]. Update a player rank ? [3]").lower()
         if answer =="1":
             pass
@@ -32,39 +67,22 @@ def confirm(action, tournament=None):
             print("To resume later the tournament, please note this following id : " + str(tournament.id))
             quit()
         elif answer == "3":
-            player_id = int(input("Enter the id of the player you are looking for for : "))
-            player_rank = int(input("Enter the the new rank for this player : "))
-
-            #update player table
-            players_table.update({'rank': player_rank}, doc_ids=[player_id])
-
-            #update player in tournament instance in base
-            tournament.update_rank(tournaments_table, tournament.id, player_id, player_rank)
-
-            #update player in tournament instance
-            tournament = tournaments_table.get(doc_id=tournament.id)
-            for player in tournament["players"]:
-                if player["id"] == player_id:
-                    player["rank"] = player_rank
-
+            update_player_rank(tournament)
+            confirm("continue_quit_updateRank", tournament)
     return answer == "y"
 
 def main():
 
-    # db = TinyDB('db.json')
-    # players_table = db.table('players')
-    # tournaments_table = db.table('tournament')
-
     def create_player():
-        player = Player(first_name="", rank=0, id="")
+        player = Player(first_name="", rank=0, id="", last_name="", birthday="", sex="")
 
         player.first_name = input("Enter player's first name: ")
-        # player.last_name = input("Enter player's last name: ")
-        # player.birthday = input("Enter player's birthday: ")
-        # player.sex = input("Enter player's sex: ")
+        player.last_name = input("Enter player's last name: ")
+        player.birthday = input("Enter player's birthday: ")
+        player.sex = input("Enter player's sex: ")
         player.rank = input("Enter player's rank: ")
 
-        player.create(player, player.first_name, player.rank, players_table)
+        player.create(player, player.first_name, player.last_name, player.birthday, player.sex, player.rank, players_table)
 
         return player
 
@@ -72,10 +90,10 @@ def main():
         tournament = Tournament()
 
         tournament.name =  input("Enter tournament's name: ")
-        # tournament.place = input("Enter tournament's place: ")
-        # tournament.date = input("Enter tournament's date: ")
-        # tournament.time_control = input("Enter tournament's time_control: ")
-        # tournament.description = input("Enter tournament's description: ")
+        tournament.place = input("Enter tournament's place: ")
+        tournament.date = input("Enter tournament's date: ")
+        tournament.time_control = input("Enter tournament's time_control: ")
+        tournament.description = input("Enter tournament's description: ")
 
         players_list = []
         for index in range(6):
@@ -89,21 +107,6 @@ def main():
         return tournament
 
     def resume_tournament():
-
-        def resume(tournament):
-            tournament_instance = Tournament()
-            tournament_instance.id = tournament["id"],
-            tournament_instance.name = tournament["name"],
-            tournament_instance.players = tournament_instance.deserialized_player(tournament["players"])
-            # tournament_instance.date = tournament["date"],
-            tournament_instance.number_of_turns = tournament["number_of_turns"],
-            tournament_instance.turns = tournament_instance.deserialize_turns(tournament["turns"]),
-            tournament_instance.turns = tournament_instance.turns[0] # because it return a tuple 
-            # tournament_instance.time_control = tournament["time_control"],
-            # tournament_instance.description = tournament["description"],
-
-            return tournament_instance
-
 
         tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
         tournament = tournaments_table.get(doc_id=tournament_id)
@@ -134,7 +137,7 @@ def main():
 
     def menu():
         print("Welcome in the chess tournament generator. What do you want to do ?")
-        first_action = input("Create some players ? [1]. Create a tournament ? [2]. Resume a tournament ? [3]. Generate a report ? [4] ").lower()
+        first_action = input("Create some players ? [1]. Create a tournament ? [2]. Resume a tournament ? [3]. Generate a report ? [4]. Update a plyer's rank [5] ").lower()
 
         if first_action == "1":
             number_of_players = int(input("How many players do you want to create : "))
@@ -173,6 +176,14 @@ def main():
             elif type_of_report == "5":
                 tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
                 generate_report(players_table, tournaments_table, "tournaments_matchs_list", tournament_id)
+        elif first_action == "5":
+            tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
+
+            tournament = tournaments_table.get(doc_id=tournament_id)
+            print(tournament)
+            tournament_instance = resume(tournament)
+            print(tournament_instance)
+            update_player_rank(tournament_instance)
             
     menu()
 
@@ -183,11 +194,14 @@ main()
 
 
 
-#git ignore : pycache OK ? db.json OK
+
 #faire le cours python maintenabale pour pep8
 
-# update rank
-# affichage joli view
-#decommenter et mettre toutes les valeurs
-#test
+
+# affichage joli view OK
+# update score dès le début OK
+#decommenter et mettre toutes les valeurs input OK
+#test en version réelle OK
 #flake
+#readme
+#git ignore : pycache OK ? db.json OK + supprimer repo distant

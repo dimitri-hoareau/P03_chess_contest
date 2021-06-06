@@ -1,9 +1,7 @@
 import operator
-from datetime import datetime
 from tinydb import TinyDB
 from models.tournament import Tournament
 from models.player import Player
-from models.match import Match
 from models.turn import Turn
 from view import generate_report
 
@@ -11,34 +9,33 @@ db = TinyDB('db.json')
 players_table = db.table('players')
 tournaments_table = db.table('tournament')
 
+
 def resume(tournament):
     tournament_instance = Tournament()
-    print(tournament_instance)
-    print(tournament)
     tournament_instance.id = tournament["id"],
     tournament_instance.name = tournament["name"],
     tournament_instance.players = tournament_instance.deserialized_player(tournament["players"])
     tournament_instance.date = tournament["date"],
     tournament_instance.number_of_turns = tournament["number_of_turns"],
     tournament_instance.turns = tournament_instance.deserialize_turns(tournament["turns"]),
-    tournament_instance.turns = tournament_instance.turns[0] # because it return a tuple 
+    tournament_instance.turns = tournament_instance.turns[0]
     tournament_instance.time_control = tournament["time_control"],
     tournament_instance.description = tournament["description"],
 
     return tournament_instance
 
-def update_player_rank(tournament=None):
 
+def update_player_rank(tournament=None):
     player_id = int(input("Enter the id of the player you are looking for for : "))
     player_rank = int(input("Enter the the new rank for this player : "))
 
-    #update player table
+    # update player table
     players_table.update({'rank': player_rank}, doc_ids=[player_id])
 
-    #update player in tournament instance in base
+    # update player in tournament instance in base
     tournament.update_rank(tournaments_table, tournament.id, player_id, player_rank)
 
-    #update player in tournament instance
+    # update player in tournament instance
     if type(tournament.id) is tuple:
         tournament.id = tournament.id[0]
     tournament = tournaments_table.get(doc_id=tournament.id)
@@ -61,7 +58,7 @@ def confirm(action, tournament=None):
     elif action == "continue_quit_updateRank":
         print("This turn is over. What do you want to do ?")
         answer = input("Continue ? [1]. Quit tournament ? [2]. Update a player rank ? [3]").lower()
-        if answer =="1":
+        if answer == "1":
             pass
         elif answer == "2":
             print("To resume later the tournament, please note this following id : " + str(tournament.id))
@@ -71,8 +68,8 @@ def confirm(action, tournament=None):
             confirm("continue_quit_updateRank", tournament)
     return answer == "y"
 
-def main():
 
+def main():
     def create_player():
         player = Player(first_name="", rank=0, id="", last_name="", birthday="", sex="")
 
@@ -89,14 +86,14 @@ def main():
     def create_tournament():
         tournament = Tournament()
 
-        tournament.name =  input("Enter tournament's name: ")
+        tournament.name = input("Enter tournament's name: ")
         tournament.place = input("Enter tournament's place: ")
         tournament.date = input("Enter tournament's date: ")
         tournament.time_control = input("Enter tournament's time_control: ")
         tournament.description = input("Enter tournament's description: ")
 
         players_list = []
-        for index in range(6):
+        for index in range(8):
             player_id = int(input("Enter the id of the player " + str(index + 1) + " for this tournament : "))
             tournament.get_player_for_tournament(player_id, players_table, tournament)
 
@@ -116,28 +113,27 @@ def main():
             print("This tournament is already finished")
         else:
             print("You will resume the tournament : " + tournament["name"] + " from the turn number : " + str(number_of_turns + 1))
-            
             tournament_instance = resume(tournament)
             turns_left = tournament_instance.number_of_turns[0] - number_of_turns
             sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
 
             try:
-                tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table)
-            except:
+                tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table, confirm)
+            except IndexError:
                 create_turn(tournament_instance)
-
 
     def create_turn(tournament):
 
         sorted_players_by_rank = sorted(tournament.players, key=operator.attrgetter('rank'))
         turn = Turn()
         turn.first_round(turn, sorted_players_by_rank, tournament, tournaments_table, confirm)
-        turns_left = tournament.number_of_turn -1
+        turns_left = tournament.number_of_turn - 1
         turn.turns_count(turns_left, tournament, sorted_players_by_rank, tournaments_table, confirm)
 
     def menu():
         print("Welcome in the chess tournament generator. What do you want to do ?")
-        first_action = input("Create some players ? [1]. Create a tournament ? [2]. Resume a tournament ? [3]. Generate a report ? [4]. Update a plyer's rank [5] ").lower()
+        first_action = input("Create some players ? [1]. Create a tournament ? [2]."
+                             + "Resume a tournament ? [3]. Generate a report ? [4]. Update a player's rank [5] ").lower()
 
         if first_action == "1":
             number_of_players = int(input("How many players do you want to create : "))
@@ -152,7 +148,8 @@ def main():
 
         elif first_action == "4":
             print("Select the type of report you want to generate : ")
-            type_of_report = input("List for all players ? [1]. List for player's tournament ? [2]. List of tournaments ? [3]. Liste of turns ? [4]. Liste of matchs ? [5] ").lower()
+            type_of_report = input("List for all players ? [1]. List for player's tournament ? [2]. List of tournaments ? [3]."
+                                   + "List of turns ? [4]. Liste of matchs ? [5] ").lower()
             if type_of_report == "1":
                 print("What type of list ? ")
                 type_of_list = input("Ordered list by name ? [1]. Ordered list by rank ? [2]").lower()
@@ -180,28 +177,19 @@ def main():
             tournament_id = int(input("Enter the id of the tournament you are looking for for : "))
 
             tournament = tournaments_table.get(doc_id=tournament_id)
-            print(tournament)
             tournament_instance = resume(tournament)
-            print(tournament_instance)
             update_player_rank(tournament_instance)
-            
     menu()
+
 
 main()
 
-
-
-
-
-
-
 #faire le cours python maintenabale pour pep8
-
-
 # affichage joli view OK
-# update score dès le début OK
+# update rank dès le début OK
 #decommenter et mettre toutes les valeurs input OK
 #test en version réelle OK
-#flake
+#flake 
+#docstring
 #readme
 #git ignore : pycache OK ? db.json OK + supprimer repo distant

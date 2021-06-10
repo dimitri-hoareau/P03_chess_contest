@@ -25,22 +25,22 @@ python -m venv env
  ```
 source env/bin/activate
 ```
+- you need to install all the package mentionned in requierement.txt :
  ```
 pip install -r requirements.txt
 ```
-if you are with the 3.8 python version :
-
+- if you are with the 3.8 python version :
  ```
 sed -i 's/MAX_LINE_LENGTH = 79/MAX_LINE_LENGTH = 119/g' env/lib/python3.8/site-packages/flake8/defaults.py 
 ```
-
 if you are with another version, just change the version in the path : 
-
  ```
 env/lib/<your_python_version>/site-packages/flake8/defaults.py 
 ```
-
-- launch the app with python
+- launch the app with python (exemple for python3)
+ ```
+python3 controller.py
+```
 
 #### Menu :
 

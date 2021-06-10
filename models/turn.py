@@ -75,10 +75,12 @@ class Turn:
                 for j in range(total_players_iterations):
                     break_loop = False
                     if (((i+(j+1)) <= (len(sorted_players_by_score)-1)) and
-                            (sorted_players_by_score[i + (j + 1)].id not in sorted_players_by_score[i].players_played) and
+                            (sorted_players_by_score[i + (j + 1)].id
+                             not in sorted_players_by_score[i].players_played) and
                             (sorted_players_by_score[i + (j + 1)] not in players_already_in_game)):
                         pair = [sorted_players_by_score[i], sorted_players_by_score[i + (j + 1)]]
-                        players_already_in_game.extend([sorted_players_by_score[i], sorted_players_by_score[i + (j + 1)]])
+                        players_already_in_game.extend([sorted_players_by_score[i],
+                                                        sorted_players_by_score[i + (j + 1)]])
                         break_loop = True
 
                     if break_loop:

@@ -118,8 +118,10 @@ class Tournament:
 
         for match in turn_matches:
             serialiazed_match = {
-                match.match[0][0].last_name + " " + match.match[0][0].first_name + " (" + str(match.match[0][0].id) + ")": match.match[0][1],
-                match.match[1][0].last_name + " " + match.match[1][0].first_name + " (" + str(match.match[1][0].id) + ")": match.match[1][1]
+                match.match[0][0].last_name + " " +
+                match.match[0][0].first_name + " (" + str(match.match[0][0].id) + ")": match.match[0][1],
+                match.match[1][0].last_name + " " +
+                match.match[1][0].first_name + " (" + str(match.match[1][0].id) + ")": match.match[1][1]
             }
             matches.append(serialiazed_match)
 

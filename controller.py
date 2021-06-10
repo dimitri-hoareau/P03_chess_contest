@@ -79,7 +79,8 @@ def main():
         player.sex = input("Enter player's sex: ")
         player.rank = input("Enter player's rank: ")
 
-        player.create(player, player.first_name, player.last_name, player.birthday, player.sex, player.rank, players_table)
+        player.create(player, player.first_name, player.last_name,
+                      player.birthday, player.sex, player.rank, players_table)
 
         return player
 
@@ -112,13 +113,16 @@ def main():
         if number_of_turns >= tournament["number_of_turns"]:
             print("This tournament is already finished")
         else:
-            print("You will resume the tournament : " + tournament["name"] + " from the turn number : " + str(number_of_turns + 1))
+            print("You will resume the tournament : " + tournament["name"] +
+                  " from the turn number : " + str(number_of_turns + 1))
             tournament_instance = resume(tournament)
             turns_left = tournament_instance.number_of_turns[0] - number_of_turns
             sorted_players_by_rank = sorted(tournament_instance.players, key=operator.attrgetter('rank'))
 
             try:
-                tournament_instance.turns[0].turns_count(turns_left, tournament_instance, sorted_players_by_rank, tournaments_table, confirm)
+                tournament_instance.turns[0].turns_count(turns_left,
+                                                         tournament_instance, sorted_players_by_rank,
+                                                         tournaments_table, confirm)
             except IndexError:
                 create_turn(tournament_instance)
 
@@ -133,7 +137,8 @@ def main():
     def menu():
         print("Welcome in the chess tournament generator. What do you want to do ?")
         first_action = input("Create some players ? [1]. Create a tournament ? [2]."
-                             + "Resume a tournament ? [3]. Generate a report ? [4]. Update a player's rank [5] ").lower()
+                             + "Resume a tournament ? [3]. Generate a report ? [4]."
+                             + "Update a player's rank [5] ").lower()
 
         if first_action == "1":
             number_of_players = int(input("How many players do you want to create : "))
@@ -148,8 +153,8 @@ def main():
 
         elif first_action == "4":
             print("Select the type of report you want to generate : ")
-            type_of_report = input("List for all players ? [1]. List for player's tournament ? [2]. List of tournaments ? [3]."
-                                   + "List of turns ? [4]. Liste of matchs ? [5] ").lower()
+            type_of_report = input("List for all players ? [1]. List for player's tournament ? [2]."
+                                   + " List of tournaments ? [3]. List of turns ? [4]. Liste of matchs ? [5] ").lower()
             if type_of_report == "1":
                 print("What type of list ? ")
                 type_of_list = input("Ordered list by name ? [1]. Ordered list by rank ? [2]").lower()

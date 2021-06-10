@@ -28,6 +28,17 @@ source env/bin/activate
  ```
 pip install -r requirements.txt
 ```
+if you are with the 3.8 python version :
+
+ ```
+sed -i 's/MAX_LINE_LENGTH = 79/MAX_LINE_LENGTH = 119/g' env/lib/python3.8/site-packages/flake8/defaults.py 
+```
+
+if you are with another version, just change the version in the path : 
+
+ ```
+env/lib/<your_python_version>/site-packages/flake8/defaults.py 
+```
 
 - launch the app with python
 
@@ -50,6 +61,14 @@ You can display the following informations in a report :
 - list of all tournaments
 - list of all tournament's turns
 - list of all tournament's match
+
+#### Flake8 report :
+
+Be sure that the program is closed, and launch this following command : 
+
+ ```
+flake8 --format=html --htmldir=flake-report 
+```
 
 ### Prerequisites
 

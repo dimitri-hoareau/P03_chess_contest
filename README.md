@@ -3,9 +3,9 @@ Python app for create chess tournament
 
 ## About The Project
 
-Python chess contest is an app who allow an user to create a players, tournaments, turns and match. 
-the tournament is designed for 8 players.
-To generate the pairs, we use the suiss system
+* Python chess contest is an app who allow an user to create a players, tournaments, turns and match. 
+* the tournament is designed for 8 players.
+* To generate the pairs, we use the suiss system
 
 ### Tested With
 Python 3.8.5
@@ -33,12 +33,12 @@ pip install -r requirements.txt
 
 #### Menu :
 
-1 Create one on more players. You have to create at least 8 players to start a tournament. Each player have a unique ID. Follow the instruction in your terminal to complete all the required informations. 
-2 Create a tournament. You can select players by ID to integrate them in the tournament.  Follow the instruction in your terminal to complete all the required informations. For the time control, you have 3 choices : "bullet", "blitz" or "coup rapide".
+1. Create one on more players. You have to create at least 8 players to start a tournament. Each player have a unique ID. Follow the instruction in your terminal to complete all the required informations. 
+2. Create a tournament. You can select players by ID to integrate them in the tournament.  Follow the instruction in your terminal to complete all the required informations. For the time control, you have 3 choices : "bullet", "blitz" or "coup rapide".
 When the tournament is lauched, just follow the information in the terminal. You can quit the tournament when you want to resume later. 
-3 Resume a tournament, you have to select a tournament by his ID for resume.
-4 generate a report ( check the informations in the subsection "generate a report menu underneath" )
-5 update player rank . You also have the possibility to update the rank player after each turn. Just select a player id and a tournament ID, then update the player rank. 
+3. Resume a tournament, you have to select a tournament by his ID for resume.
+4. generate a report ( check the informations in the subsection "generate a report menu underneath" )
+5. update player rank . You also have the possibility to update the rank player after each turn. Just select a player id and a tournament ID, then update the player rank. 
 
 #### Generate report menu :
 

@@ -183,13 +183,3 @@ def main():
 
 
 main()
-
-#faire le cours python maintenabale pour pep8
-# affichage joli view OK
-# update rank dès le début OK
-#decommenter et mettre toutes les valeurs input OK
-#test en version réelle OK
-#flake 
-#docstring
-#readme
-#git ignore : pycache OK ? db.json OK + supprimer repo distant

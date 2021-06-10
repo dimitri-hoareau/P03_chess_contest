@@ -70,13 +70,6 @@ Be sure that the program is closed, and launch this following command :
 flake8 --format=html --htmldir=flake-report 
 ```
 
-### Prerequisites
-
-If they are not already installed on your system, you need to install all the package mentionned in requierement.txt :
-  ```
-pip install <package-name>
-  ```
-
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.

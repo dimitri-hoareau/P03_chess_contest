@@ -29,14 +29,6 @@ source env/bin/activate
  ```
 pip install -r requirements.txt
 ```
-- if you are with the 3.8 python version, enter this command to have the correct version of flake8 report :
- ```
-sed -i 's/MAX_LINE_LENGTH = 79/MAX_LINE_LENGTH = 119/g' env/lib/python3.8/site-packages/flake8/defaults.py 
-```
-if you are with another version, just change the version in the path on the line command : 
- ```
-sed -i 's/MAX_LINE_LENGTH = 79/MAX_LINE_LENGTH = 119/g' env/lib/<your_pyhton_version>/site-packages/flake8/defaults.py 
-```
 - launch the app with python (exemple for python3)
  ```
 python3 controller.py
@@ -67,7 +59,7 @@ You can display the following informations in a report :
 Be sure that the program is closed, and launch this following command : 
 
  ```
-flake8 --format=html --htmldir=flake-report 
+flake8 --max-line-length=119 --format=html --htmldir=flake-report 
 ```
 
 ## Contributing
